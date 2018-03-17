@@ -15,8 +15,9 @@
   "author": "Dhi Aurrahman <diorahman@rockybars.com>",
   "license": "MIT",
   "dependencies": {
-    "superagent": "^0.18.0",
-    "cheerio": "^0.16.0"
+    "cheerio": "^0.16.0",
+    "cheerio-tableparser": "^1.0.1",
+    "superagent": "^0.18.0"
   },
   "devDependencies": {
     "mocha": "^1.19.0",
