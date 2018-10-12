@@ -16,7 +16,6 @@
   "license": "MIT",
   "dependencies": {
     "cheerio": "^0.16.0",
-    "cheerio-tableparser": "^1.0.1",
     "superagent": "^0.18.0"
   },
   "devDependencies": {

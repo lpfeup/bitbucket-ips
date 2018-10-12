@@ -1,11 +1,9 @@
 var request = require ('superagent');
 var cheerio = require ('cheerio');
-var cheerioTableParser = require ('cheerio-tableparser');
 var URL = 'https://confluence.atlassian.com/bitbucket/what-are-the-bitbucket-cloud-ip-addresses-i-should-use-to-configure-my-corporate-firewall-343343385.html';
 
 function parse (html) {
 	var $ = cheerio.load(html);
-	cheerioTableParser(cheerio);
 
 	var obj = {
 		ipv4: {
@@ -18,30 +16,37 @@ function parse (html) {
 		}
 	};
 
-	var parsedTable = parseTable($('table.confluenceTable').eq(0), 2);
-	obj.ipv4.inbounds.push(...parsedTable[0]);
-	obj.ipv4.outbounds.push(...parsedTable[1]);
-	obj.ipv6.inbounds.push(...parsedTable[2]);
-	obj.ipv6.outbounds.push(...parsedTable[3]);
+	var currentElem = $('#WhataretheBitbucketCloudIPaddressesIshouldusetoconfiguremycorporatefirewall\\?-ValidIPaddressesforbitbucket\\.org\\,api\\.bitbucket\\.org\\,andaltssh\\.bitbucket\\.org');
+	
+	currentElem = currentElem.next();
+	obj.ipv4.inbounds.push(...parseElem(currentElem));
 
-	parsedTable = parseTable($('table.confluenceTable').eq(1), 1);
-	obj.ipv4.inbounds.push(...parsedTable[0]);
-	obj.ipv6.inbounds.push(...parsedTable[1]);
+	currentElem = currentElem.next();
+	obj.ipv4.outbounds.push(...parseElem(currentElem));
 
-	parsedTable = parseTable($('table.confluenceTable').eq(2), 1);
-	obj.ipv4.outbounds.push(...parsedTable[0]);
+	currentElem = currentElem.next();
+	obj.ipv6.inbounds.push(...parseElem(currentElem));
 
-	parsedTable = parseTable($('table.confluenceTable').eq(3), 1);
-	obj.ipv4.outbounds.push(...parsedTable[0]);
+	currentElem = currentElem.next();
+	obj.ipv6.outbounds.push(...parseElem(currentElem));
+
+	currentElem = currentElem.next();
+	obj.ipv4.inbounds.push(...parseElem(currentElem));
+
+	currentElem = currentElem.next();
+	obj.ipv6.inbounds.push(...parseElem(currentElem));
+
+	currentElem = currentElem.next();
+	obj.ipv4.inbounds.push(...parseElem(currentElem));
+
+	currentElem = currentElem.next();
+	obj.ipv6.inbounds.push(...parseElem(currentElem));
 
 	return obj;
 }
 
-function parseTable (table, headers) {
-	var parsedTable = table.parsetable(false, false, true);
-	parsedTable = parsedTable.map(col => col.filter((elem, i) => i >= headers && elem.length > 0));
-
-	return parsedTable;
+function parseElem(elem) {
+	return elem.find('ul').text().split('\n').map(val => val.trim()).filter(val => val.length);
 }
 
 module.exports = function(cb){
